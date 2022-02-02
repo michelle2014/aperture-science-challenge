@@ -46,6 +46,8 @@ class AuthTest extends TestCase
             'password' => 'password'
         ]);
 
+        $user->delete();
+
         $response->assertStatus(200);
         $response->assertJson([
             'two_factor' => false

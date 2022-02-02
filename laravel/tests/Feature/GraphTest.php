@@ -79,10 +79,10 @@ class GraphTest extends TestCase
 
     public function testQueryUsersAuthenticated(): void
     {
-        $subject = User::factory()->make();
+        $user = User::factory()->make();
 
         Sanctum::actingAs(
-            $subject,
+            $user,
         );
 
         $response = $this->graphQL(/** @lang GraphQL */ '
@@ -96,6 +96,6 @@ class GraphTest extends TestCase
         ')->decodeResponseJson();
 
         $users = json_decode($response->json)->data->users->data;
-        $this->assertCount(3, $users);
+        $this->assertCount(1, $users);
     }
 }
