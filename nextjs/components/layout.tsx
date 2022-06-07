@@ -1,6 +1,7 @@
-import Head from 'next/head';
 import { ReactNode } from 'react';
-import styles from '../styles/App.module.css'
+import Head from 'next/head';
+import Nav from './nav';
+import styles from '../styles/App.module.css';
 
 interface LayoutType {
     children: ReactNode,
@@ -19,13 +20,12 @@ const Layout = ({children, title="Aperture Science Enrichment Center | Subject M
                 rel="stylesheet"
                 />
         </Head>
-        <main>
-            <div className={styles.container}>
-                <div className={styles.main}>
-                    {children}
-                </div>
-            </div>
-        </main>
+        <Nav />
+        <div className={styles.container}>
+            <main className={styles.main}>
+                {children}
+            </main>
+        </div>
       </>
     );
 }

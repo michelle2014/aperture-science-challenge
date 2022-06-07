@@ -4,7 +4,7 @@
     "video": false,
     "baseUrl": "http://host.docker.internal",
     "env": {
-        "email": "foo@foo.com",
-        "password": "bar"
+        "email": "GLaDOS@aperture.com",
+        "password": "ISawDeer"
     }
 }

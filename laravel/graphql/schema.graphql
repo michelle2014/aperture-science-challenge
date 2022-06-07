@@ -2,7 +2,8 @@
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 type Query {
     users: [User!]! @paginate(defaultCount: 10) @guard
@@ -14,6 +15,24 @@ type Query {
 
 type Mutation {
     deleteSubject(id: ID!): Subject @delete
+    createSubject(
+        id: ID!
+        name: String!
+        test_chamber: Int!
+        date_of_birth: DateTime!
+        score: Int!
+        alive: Boolean!
+        created_at: DateTime!
+    ): Subject @create
+    updateSubject(
+        id: ID!
+        name: String!
+        test_chamber: Int!
+        date_of_birth: DateTime!
+        score: Int!
+        alive: Boolean!
+        updated_at: DateTime!
+    ): Subject @update
 }
 
 type User {

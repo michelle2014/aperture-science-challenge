@@ -1,12 +1,14 @@
 
-import React, { useEffect, useState } from 'react';
-import { NextPage, NextPageContext  } from 'next'
-import { useCookies } from "react-cookie"
-import styles from '../styles/App.module.css'
+import React, { useEffect, useState, useContext } from 'react';
+import { NextPage, NextPageContext  } from 'next';
+import { useCookies } from "react-cookie";
+import { parseCookies, resolveApiHost } from "../helpers/";
+import { useRouter } from 'next/router';
+import AppContext from "../components/appContext";
+import Layout from "../components/layout";
+import Link from 'next/link';
 import axios from 'axios';
-import { parseCookies, resolveApiHost } from "../helpers/"
-import { useRouter } from 'next/router'
-import Layout from "../components/layout"
+import styles from '../styles/App.module.css';
 
 interface Subject {
   id: number,
@@ -30,8 +32,9 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
   const [ authenticated, setAuth ] = useState<Boolean>(!!props.XSRF_TOKEN);
   const [ subjects, setSubjects ] = useState<Array<Subject>>();
   const [ message, setErrorMessage ] = useState<string>('');
-  const [cookie, setCookie, removeCookie] = useCookies(["XSRF-TOKEN"])
+  const [cookie, setCookie, removeCookie] = useCookies(["XSRF-TOKEN"]);
   const api = `${props.protocol}//${props.hostname}`;
+  const context = useContext(AppContext);
 
   const logout = async () => {
     try {
@@ -55,6 +58,10 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
     }
     const date = new Date(dateStr);
     return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+  }
+
+  const create = () => {
+    router.push('/create');
   }
 
   useEffect(() => {
@@ -102,7 +109,15 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
 
   return (
     <Layout>
-      <h1>Testing Subjects</h1>
+      <h1>Testing Subjects
+        <span>
+          <button 
+            onClick={create} 
+            id="create-subject"
+            className={styles.createSubject}>Create subject
+          </button>
+        </span>
+      </h1>
       <section className={styles.content}>
         {message && (
           <p data-testid="error-msg">{message}</p>
@@ -111,19 +126,24 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
           <table data-testid="subjects-table">
             <thead>
               <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>DOB</td>
-                <td>Alive</td>
-                <td>Score</td>
-                <td>Test Chamber</td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Alive</th>
+                <th>Score</th>
+                <th>Test Chamber</th>
               </tr>
             </thead>
             <tbody>
               {subjects.map(subject => (
                 <tr key={subject.id}>
                   <td>{subject.id}</td>
-                  <td>{subject.name}</td>
+                  <td 
+                    onClick={() => {context.setSession(subject); router.push('/edit')}} 
+                    className={styles.editSubject}>
+                    <Link  
+                      href="/edit">{subject.name}
+                    </Link></td>
                   <td>{formatDate(subject.date_of_birth)}</td>
                   <td>{subject.alive ? 'Y' : 'N'}</td>
                   <td>{subject.score}</td>
@@ -138,12 +158,12 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
             <table>
             <thead>
               <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>DOB</td>
-                <td>Alive</td>
-                <td>Score</td>
-                <td>Test Chamber</td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Alive</th>
+                <th>Score</th>
+                <th>Test Chamber</th>
               </tr>
             </thead>
             <tbody>

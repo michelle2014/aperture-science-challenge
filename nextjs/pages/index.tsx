@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react'
-import { NextPage, NextPageContext } from 'next'
-import { useRouter } from 'next/router'
-import styles from '../styles/App.module.css'
+import React, { useState } from 'react';
+import { NextPage, NextPageContext } from 'next';
+import { useRouter } from 'next/router';
+import { parseCookies, resolveApiHost } from "../helpers/";
+import Layout from "../components/layout";
 import axios from 'axios';
-import { parseCookies, resolveApiHost } from "../helpers/"
-import Layout from "../components/layout"
+import styles from '../styles/App.module.css';
 
 Home.getInitialProps = ({ req, res }: NextPageContext) => {
   const cookies = parseCookies(req);
@@ -40,7 +40,8 @@ export default function Home(props: NextPage & {XSRF_TOKEN: string, hostname: st
             xsrfCookieName: 'XSRF-TOKEN',
             xsrfHeaderName: 'X-XSRF-TOKEN',
           }
-        }).then(res => router.push('/subjects'))
+        }).then(res => {
+          router.push('/subjects')})
         .catch(e => {
           if (e.response?.data?.message) {
             setFormMessage(e.response?.data?.message);

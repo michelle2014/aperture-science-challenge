@@ -1,2 +1,3 @@
 postgres-data
 cypress/screenshots
+laravel/.env

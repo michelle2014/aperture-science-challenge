@@ -19,14 +19,17 @@ class GraphTest extends TestCase
     public function test_create_query_destroy_subject(): void
     {
         $subject = Subject::factory()->create();
-        // $this->testUserId = $subject->id;
-        $response = $this->graphQL(/** @lang GraphQL */ '
+        //$this->testUserId = $subject->id;
+        $response = $this->graphQL(
+            /** @lang GraphQL */
+            '
             {
-                subject(id: '.$subject->id.') {
+                subject(id: ' . $subject->id . ') {
                     name
                 }
             }
-        ')->assertJson([
+        '
+        )->assertJson([
             'data' => [
                 'subject' => [
                     'name' => $subject->name,
@@ -34,15 +37,31 @@ class GraphTest extends TestCase
             ],
         ]);
 
-        $response = $this->graphQL(/** @lang GraphQL */ '
+        $response = $this->graphQL(
+            /** @lang GraphQL */
+            '
             mutation {
-                deleteSubject(id: '.$subject->id.') {
+                deleteSubject(id: ' . $subject->id . ') {
+                    name
+                },
+                createSubject(id: ' . $subject->id . ', name: ' . $subject->name . ', test_chamber: ' . $subject->test_chamber . ', date_of_birth: ' . $subject->date_of_birth . ', score: ' . $subject->score . ', alive: ' . $subject->alive . ', created_at: ' . $subject->create_at . ') {
+                    name
+                },
+                updateSubject(id: ' . $subject->id . ', name: ' . $subject->name . ', test_chamber: ' . $subject->test_chamber . ', date_of_birth: ' . $subject->date_of_birth . ', score: ' . $subject->score . ', alive: ' . $subject->alive . ', updated_at: ' . $subject->create_at . ') {
                     name
                 }
             }
-        ')->assertJson([
+        '
+        )->assertJson([
             'data' => [
                 'deleteSubject' => [
+                    'name' => $subject->name,
+                ],
+                'createSubject' => [
+                    'name' => $subject->name,
+                ],
+                'updateSubject' => [
+
                     'name' => $subject->name,
                 ],
             ],
@@ -57,7 +76,9 @@ class GraphTest extends TestCase
 
     public function testQueryUsersProtected(): void
     {
-        $response = $this->graphQL(/** @lang GraphQL */ '
+        $response = $this->graphQL(
+            /** @lang GraphQL */
+            '
             {
                 users {
                     data {
@@ -65,7 +86,8 @@ class GraphTest extends TestCase
                     }
                 }
             }
-        ')->decodeResponseJson();
+        '
+        )->decodeResponseJson();
 
         $message = array_shift(json_decode($response->json)->errors)->message;
         $this->assertEquals($message, "Unauthenticated.");
@@ -85,7 +107,9 @@ class GraphTest extends TestCase
             $user,
         );
 
-        $response = $this->graphQL(/** @lang GraphQL */ '
+        $response = $this->graphQL(
+            /** @lang GraphQL */
+            '
             {
                 users {
                     data {
@@ -93,7 +117,8 @@ class GraphTest extends TestCase
                     }
                 }
             }
-        ')->decodeResponseJson();
+        '
+        )->decodeResponseJson();
 
         $users = json_decode($response->json)->data->users->data;
         $this->assertCount(1, $users);
