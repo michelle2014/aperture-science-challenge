@@ -98,7 +98,7 @@ Please complete the following user stories relative to the role you are applying
    - React context has been applied for sharing data between pages.
    - Added subject deletion and adjusted the table a bit wider accordingly.
 
-# Tests:
+### Tests:
 
 1. Created two more frontend unit tests, and fixed an error in index.test.tsx file, and all passed
    ![FE testing result](./FETestsResult.png)
@@ -107,7 +107,7 @@ Please complete the following user stories relative to the role you are applying
 3. Fixed e2e tests, all passed, there are comments in spec.js file explaining why sometimes test still fails
    ![e2e testing result](./e2eTestsResult.png)
 
-# Errors in console:
+### Errors in console:
 
 1. Fixed Parsing error : Cannot find module 'next/babel'.
 2. Fixed a potentail memory leak bug on subject page.
