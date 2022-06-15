@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { NextPage, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { parseCookies, resolveApiHost } from "../helpers/";
+import useForm from '../helpers/useForm';
+import validate from '../helpers/validate';
 import Layout from "../components/layout";
 import axios from 'axios';
 import styles from '../styles/App.module.css';
@@ -18,36 +20,34 @@ export default function Create(props: NextPage & {XSRF_TOKEN: string, hostname: 
   const [ authenticated, setAuth ] = useState<Boolean>(!!props.XSRF_TOKEN);
   const api = `${props.protocol}//${props.hostname}`;
 
-  const create = async (event: any) => {
+  const createSubject = async (event: any) => {
 
-    event.preventDefault();
     try {
         await axios.post(`${api}/graphql`, {
           query: `
-          mutation ($id: ID!, $name: String!, $test_chamber: Int!, $date_of_birth: DateTime!, $score: Int!, $alive: Boolean!, $created_at: DateTime!) {
-            createSubject (id: $id, name: $name, score: $score, test_chamber: $test_chamber, alive: $alive, date_of_birth: $date_of_birth, created_at: $created_at) {
-              id
+          mutation ($name: String!, $date_of_birth: DateTime!, $score: Int!, $alive: Boolean!, $test_chamber: Int!, $created_at: DateTime!) {
+            createSubject (name: $name, date_of_birth: $date_of_birth, score: $score, alive: $alive, test_chamber: $test_chamber, created_at: $created_at) {
               name
-              score
-              test_chamber
-              alive
               date_of_birth
+              score
+              alive
+              test_chamber
               created_at
             }
           }`,
           variables:
             {
-              id:event.target.id.value,
               name:event.target.name.value,
-              test_chamber:parseInt(event.target.test_chamber.value, 10),
-              date_of_birth:event.target.date_of_birth.value,
+              date_of_birth:event.target.dob.value,              
               score:parseInt(event.target.score.value, 10),
               alive:(event.target.alive.value === "Y")? true: false,
+              test_chamber:parseInt(event.target.chamber.value, 10),
               created_at: new Date().toISOString().substring(0,19).replace('T', ' ')},
           withCredentials: true,
         }).then(res => {
             console.log(res);
-            router.push('/subjects')})
+            router.push('/subjects');
+          })
         .catch(e => {
           if (e.response?.data?.message) {
             setFormMessage(e.response?.data?.message);
@@ -61,38 +61,80 @@ export default function Create(props: NextPage & {XSRF_TOKEN: string, hostname: 
     }
   };
 
+  const { values, errors, handleInputChange, handleSubmit, validateInputs } = useForm(createSubject, validate);
+
   return (
     <Layout>
-      { authenticated && <>
+      { authenticated && 
+      <>
       <h1>Create new subject</h1>
       <section className={styles.content}>
-          <form id="create-subject" onSubmit={create} data-testid="create-subject-form">
-            <div className={styles.inputGroup}>
-              <label htmlFor="id">ID</label>
-              <input id="id" type="number" name="id" required />
-            </div>
+          <form id="create-subject" onSubmit={handleSubmit} data-testid="create-subject-form">
             <div className={styles.inputGroup}>
               <label htmlFor="name">Name</label>
-              <input id="name" type="text" name="name" required/>
+              <input 
+                onChange={handleInputChange} 
+                onBlur={validateInputs} 
+                className={errors.name ? styles.danger : ""}
+                value={values.name || ''} 
+                id="name" 
+                type="text" 
+                name="name" 
+                required/>
             </div>
+            <div>{errors.name && (<p style={{color: 'red'}}>{errors.name}</p>)}</div>
             <div className={styles.inputGroup}>
-              <label htmlFor="date-of-birth">DOB</label>
-              <input id="date-of-birth" type="date" name="date-of-birth" required/>
-              <p>(example: 2022-06-03 02:13:21)</p>
+              <label htmlFor="dob">DOB</label>
+              <input 
+                onChange={handleInputChange} 
+                onBlur={validateInputs} 
+                className={errors.dob ? styles.danger : ""} 
+                value={values.dob || ''} 
+                id="dob" 
+                type="text" 
+                name="dob" 
+                required/>
             </div>
+            <div>{errors.dob && (<p style={{color: 'red'}}>{errors.dob}</p>)}</div>
             <div className={styles.inputGroup}>
               <label htmlFor="score">Score</label>
-              <input id="score" type="number" name="score" required/>
+              <input 
+                onChange={handleInputChange} 
+                onBlur={validateInputs} 
+                className={errors.score ? styles.danger : ""} 
+                value={values.score || ''} 
+                id="score" 
+                type="number" 
+                name="score" 
+                required/>
             </div>
+            <div>{errors.score && (<p style={{color: 'red'}}>{errors.score}</p>)}</div>
             <div className={styles.inputGroup}>
               <label htmlFor="alive">Alive</label>
-              <input id="alive" type="text" name="alive" required/>
-              <p>(please enter Y or N)</p>
+              <input 
+                onChange={handleInputChange} 
+                onBlur={validateInputs} 
+                className={errors.alive ? styles.danger : ""} 
+                value={values.alive || ''} 
+                id="alive" 
+                type="text" 
+                name="alive" 
+                required/>
             </div>
+            <div>{errors.alive && (<p style={{color: 'red'}}>{errors.alive}</p>)}</div>
             <div className={styles.inputGroup}>
-              <label htmlFor="test-chamber">Chamber</label>
-              <input id="test-chamber" type="number" name="test-chamber" required/>
+              <label htmlFor="chamber">Chamber</label>
+              <input 
+                onChange={handleInputChange} 
+                onBlur={validateInputs} 
+                className={errors.chamber ? styles.danger : ""} 
+                value={values.chamber || ''} 
+                id="chamber" 
+                type="number" 
+                name="chamber" 
+                required/>
             </div>
+            <div>{errors.chamber && (<p style={{color: 'red'}}>{errors.chamber}</p>)}</div>
             {message && (
               <p data-testid="error-msg">{message}</p>
             )}
