@@ -86,13 +86,33 @@ Please complete the following user stories relative to the role you are applying
 **Software Engineer I:**
 
 1. As an authenticated user, I want to be able to create testing subject records.
-   No extra library has been installed for this user story.
-   A navigation bar has been created for navigating between subjects and create pages.
-   Date of birth field also has time beside date according to the original data.
+   - No extra library has been installed for this user story.
+   - A navigation bar has been created for navigating between subjects and create pages.
+   - Date of birth field also has time beside date according to the original data.
+   - Added more input field verification using custom hook useForm and helper function validate, on both create and edit subject pages.
+   - Page reloading can be a bit slow sometimes after creating, editing, deleting.
+   - Changed tb tags to th tags in thead.
 2. As an authenticated user, I want to be able to edit testing subject records.
-   No extra library has been installed for this user story.
-   Subject ID can't be changed, so ID field on edit page is disabled.
-   React context has been applied for sharing data between pages.
+   - No extra library has been installed for this user story.
+   - Subject ID can't be changed, so ID field on edit page is disabled.
+   - React context has been applied for sharing data between pages.
+   - Added subject deletion and adjusted the table a bit wider accordingly.
+
+# Tests:
+
+1. Created two more frontend unit tests, and fixed an error in index.test.tsx file, and all passed
+   ![FE testing result](./FETestsResult.png)
+2. Created two more backend unit tests, still two failed, but they both work in postman, tried to fix don't know why really sorry
+   ![BE testing result](./BETestsResult.png)
+3. Fixed e2e tests, all passed, there are comments in spec.js file explaining why sometimes test still fails
+   ![e2e testing result](./e2eTestsResult.png)
+
+# Errors in console:
+
+1. Fixed Parsing error : Cannot find module 'next/babel'.
+2. Fixed a potentail memory leak bug on subject page.
+3. Uncaught TypeError: Cannot read properties of null (reading 'top') at record.js:1:29664, tried to find a way to solve it, searched in google, also had a look at record.js file, the error could be caused by strict mode, not sure, sorry can't solve this
+4. Blocked autofocusing on a <div> element in a cross-origin subframe. error appears when copy date of birth from warning message on the same page, happens when trying to copy the right date of birth format from the warning message, usually it happens when use iframe, but didn't see iframe has been employed, not sure where this comes from
 
 **Software Engineer II:**
 
