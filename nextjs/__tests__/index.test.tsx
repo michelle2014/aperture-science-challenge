@@ -2,29 +2,31 @@
  * @jest-environment jsdom
  */
 
- import React from 'react'
- import { render, screen } from '@testing-library/react'
- import Home from '../pages/index'
- 
+import { screen } from '@testing-library/react';
+import { getPage } from 'next-page-tester';
+
  describe('Home', () => {
-   beforeEach(() => {
-    render(<Home />)
-   })
+  beforeEach(async () => {
+    const { render } = await getPage({
+      route: '/',
+    });
+    await render();
+  })
 
    it('renders a heading', () => {
      const heading = screen.getByRole('heading', {
        name: "Please login",
      })
  
-     expect(heading).toBeInTheDocument()
+     expect(heading).toBeInTheDocument();
    })
 
    it('renders a login form', () => {
-    const form = screen.getByTestId("login-form")
+    const form = screen.getByTestId("login-form");
     const email = screen.getByLabelText('Email');
-    const password = screen.getByLabelText('Password')
-    expect(form).toBeInTheDocument()
-    expect(email).toBeInTheDocument()
-    expect(password).toBeInTheDocument()
+    const password = screen.getByLabelText('Password');
+    expect(form).toBeInTheDocument();
+    expect(email).toBeInTheDocument();
+    expect(password).toBeInTheDocument();
   })
  })
