@@ -34,7 +34,8 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
   const [ message, setErrorMessage ] = useState<string>('');
   const [cookie, setCookie, removeCookie] = useCookies(["XSRF-TOKEN"]);
   const api = `${props.protocol}//${props.hostname}`;
-  const context = useContext(AppContext);
+  const context: any = useContext(AppContext);
+  const [state, setState] = useState({});
 
   const logout = async () => {
     try {
@@ -64,7 +65,39 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
     router.push('/create');
   }
 
+  const destroy = async (subject_id: number) => {
+  
+    try {
+        await axios.post(`${api}/graphql`, {
+          query: `
+          mutation ($id: ID!) {
+            deleteSubject (id: $id) {
+              id
+            }
+          }`,
+          variables:
+            {
+              id:subject_id,
+            },
+          withCredentials: true,
+        }).then(() => {
+            router.push('/subjects');
+            window.location.reload();
+          })
+        .catch(e => {
+          if (e.response?.data?.message) {
+            setErrorMessage(e.response?.data?.message);
+          } else {
+            setErrorMessage('An error occurred, please try again later.')
+          }
+      });
+    } catch (err) {
+      setErrorMessage('An error occurred, please try again later.')
+    }
+  }
+
   useEffect(() => {
+
     if (authenticated) {
       axios.post(
         `${api}/graphql`,
@@ -103,7 +136,9 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
       })
     } else {
       router.push('/');
-      return;
+      return () => {
+        setState({}); 
+      };
     }
   }, [authenticated]);
 
@@ -132,6 +167,7 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
                 <th>Alive</th>
                 <th>Score</th>
                 <th>Test Chamber</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -148,6 +184,12 @@ export default function Subjects(props: NextPage & {XSRF_TOKEN: string, hostname
                   <td>{subject.alive ? 'Y' : 'N'}</td>
                   <td>{subject.score}</td>
                   <td>{subject.test_chamber}</td>
+                  <td>
+                    <button
+                      id="delete-subject"
+                      onClick={() => {destroy(subject.id); }}>Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
