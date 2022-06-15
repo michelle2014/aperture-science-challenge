@@ -14,7 +14,7 @@
 }
 
 .main {
-  min-width:600px;
+  min-width:700px;
   padding:5rem 0;
   font-size: 1.1rem;
 }
@@ -136,4 +136,8 @@
 .editSubject {
   color: #0069d9;
   cursor: pointer;
+}
+
+.danger {
+  border: 2px solid red !important;
 }
